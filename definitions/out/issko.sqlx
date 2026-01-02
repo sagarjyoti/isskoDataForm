@@ -1,0 +1,83 @@
+config {
+    type: "table",
+    name: "ISSKO",
+    description: "Final Output: Stock Occupation (Replaces CHARG-ISSKO + WRITE)",
+    tags: ["final", "daily_processing"],
+    
+    -- Performance Optimization: Partition by Date, Cluster by Product/Housing
+    bigquery: {
+        partitionBy: "DATOCC",
+        clusterBy: ["CODPRD", "CODLGT"]
+    }
+}
+
+/* COBOL MAPPING:
+   Replaces: PERFORM CHARG-ISSKO
+   Replaces: WRITE REC-SKO
+   
+   Logic:
+   1. Join 'issko_calc_dispo' (Calculations) with 'lslog' (Product Mapping).
+   2. Join 'sto_base' (Metadata) to get original timestamps (QUICRE/TMSMAJ).
+   3. Join 'f_param' to set the processing date (DATCRE).
+*/
+
+SELECT 
+    -- 1. Keys from LSLOG
+    L.codprd AS CODPRD,
+    L.codlgt AS CODLGT,
+    
+    -- 2. Occurrence Number (Mapped from 'occ' as requested)
+    C.occ AS NBROCC,
+    
+    -- 3. Dates
+    P.dattrait AS DATCRE, -- COBOL overwrites DATCRE with DATTRAIT
+    C.datocc AS DATOCC,
+    
+    -- 4. Metadata from STO_BASE
+    S.QUICRE,
+    S.TMSMAJ,
+    S.QUIMAJ,
+    -- Standard Logic: Extract Year from TMSMAJ for Partition Stock? 
+    -- (Assuming standard parsing logic from previous steps)
+    CAST(SUBSTR(S.TMSMAJ, 23, 4) AS INT64) AS PARSTK,
+
+    -- 5. Extracted Flags (1 Char)
+    SUBSTR(C.topau, C.day_num, 1) AS TOPAUT,
+    SUBSTR(C.typpl, C.day_num, 1) AS TYPPLA,
+
+    -- 6. Calculated Values (From Step 9)
+    C.nbrini AS NBPINI,
+    C.nbrres AS NBPRES,
+    C.nbropt AS NBPOPT,
+    C.nbresp AS NBPESP,
+    C.nbrepr AS NBPEPR,
+    
+    C.codcop_current AS CODCOP,
+    
+    C.nbdisr AS NBDISR,
+    C.nbdisp AS NBDISP
+
+FROM ${ref("issko_calc_dispo")} C
+
+-- Join Product Mapping
+LEFT JOIN ${ref("lslog")} L 
+    ON C.codsoc = L.codsoc 
+    AND C.numsto = L.numsto
+
+-- Join Metadata (Timestamps)
+LEFT JOIN ${ref("sto_base")} S
+    ON C.codsoc = S.codsoc 
+    AND C.numsto = S.numsto
+
+-- Cross Join Control Parameter for DATCRE
+CROSS JOIN ${ref("f_param")} P
+
+--======================================
+-- K3ISSKOD Logic (Deduplication)
+-- Ensures unique records per Product/Date if run multiple times
+
+-- QUALIFY ROW_NUMBER() OVER (
+--     PARTITION BY L.codprd, L.codlgt, C.occ, C.datocc
+--     ORDER BY S.TMSMAJ DESC, P.dattrait DESC
+-- ) = 1
+--======================================

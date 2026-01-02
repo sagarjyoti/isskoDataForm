@@ -1,0 +1,23 @@
+config {
+    type: "view",
+    name: "lslog",
+    description: "Staging: Product & Housing Mapping (Replaces LSLOGV0 Lookup)",
+    tags: ["staging", "daily_processing"]
+}
+
+/* COBOL MAPPING:
+   In COBOL, this was a specific "Read LSLOGV0" triggered only when 
+   the Store Number (NUMSTO) changed in the main loop.
+   
+   SQL Logic:
+   We simply prepare this as a View. In the main step, we will LEFT JOIN 
+   this to the main stock data to attach the Product (CODPRD) and Housing (CODLGT) codes.
+*/
+
+SELECT 
+    CODSOC AS codsoc,
+    NUMSTO AS numsto,
+    CODLGT AS codlgt,       -- Housing Code
+    CODLSC AS codprd        -- Product Code (Mapped from CODLSC)
+
+FROM ${ref("LSLOGV0")}

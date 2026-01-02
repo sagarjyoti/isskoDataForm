@@ -1,0 +1,18 @@
+config {
+    type: "table", 
+    name: "f_param",
+    description: "Control Table: Stores the Batch Processing Date (Replces F-PARAM)",
+    tags: ["control", "daily_processing"]
+}
+
+/* COBOL MAPPING:
+   READ F-PARAM INTO DATTRAIT.
+   
+   LOGIC:
+   By default, this sets DATTRAIT to Today (CURRENT_DATE).
+   If you need to re-run a past date (Historical Reload), 
+   you can change this to a specific date string (e.g., DATE('2024-01-01')).
+*/
+
+SELECT 
+    CURRENT_DATE() AS dattrait

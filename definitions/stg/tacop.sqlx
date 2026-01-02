@@ -1,0 +1,22 @@
+config {
+    type: "view", -- View is sufficient for lookup
+    name: "tacop",
+    description: "Staging: Coefficient Parameters (Replaces Memory Array T-TACOP)",
+    tags: ["staging", "daily_processing"]
+}
+
+/* COBOL MAPPING:
+   Replaces: EXEC SQL DECLARE CURS-TACOP
+   Replaces: PERFORM LOAD-TACOP VARYING... (Memory Array Loading)
+   
+   Usage: This will be joined to the main data later (replacing the SEARCH ALL).
+*/
+
+SELECT 
+    CODCOF AS codcop,
+    CAST(VENDU1 AS FLOAT64) AS coeff1,
+    CAST(OPTIO2 AS FLOAT64) AS coeff2,
+    CAST(ESPDE3 AS FLOAT64) AS coeff3,
+    CAST(REQUE4 AS FLOAT64) AS coeff4
+
+FROM ${ref("TACOPV0")}

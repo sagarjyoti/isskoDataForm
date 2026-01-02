@@ -1,0 +1,19 @@
+config {
+    type: "table",
+    name: "date_window",
+    description: "Calculates the Extraction Window (CALCUL-DATE)",
+    tags: ["control", "daily_processing"]
+}
+
+SELECT 
+    dattrait,
+    
+    -- COBOL: SUBTRACT 6 FROM MM-EXE, MOVE 01 TO JJ-EXE
+    -- Logic: First day of the month, 6 months before dattrait
+    DATE_TRUNC(DATE_SUB(dattrait, INTERVAL 6 MONTH), MONTH) AS w_datexe,
+    
+    -- COBOL: ADD 2 TO AN-EXEP, ADD 6 TO MM-EXEP
+    -- Logic: Start Date + 30 Months
+    DATE_ADD(DATE_TRUNC(DATE_SUB(dattrait, INTERVAL 6 MONTH), MONTH), INTERVAL 30 MONTH) AS w_datexep
+
+FROM ${ref("f_param")}

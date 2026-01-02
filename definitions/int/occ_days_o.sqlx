@@ -1,0 +1,47 @@
+config {
+    type: "view", -- Intermediate view
+    name: "occ_days_o",
+    description: "Intermediate: Unpivots Days and filters for 'O' (Active) only",
+    tags: ["intermediate", "daily_processing"]
+}
+
+/* COBOL MAPPING:
+   Replaces Inner Loop: "PERFORM VARYING I-JOUR FROM 1 BY 1 UNTIL I-JOUR > MAX-JOUR-MOIS"
+   Replaces Filter: "IF TOPUTI ... = 'O'"
+   
+   Logic:
+   1. Calculate the actual month based on the occurrence offset (occ).
+   2. Generate days (1..28/29/30/31) specific to that month (avoiding invalid dates).
+   3. Check the string at that position. If it's 'O', keep it. If not, drop it.
+*/
+
+WITH Calculated_Months AS (
+    SELECT 
+        *,
+        -- Calculate the specific calendar month for this period (1..15)
+        -- occ=1 is current month, occ=2 is next month, etc.
+        DATE_ADD(dat_mois, INTERVAL (occ - 1) MONTH) AS month_actual
+    FROM ${ref("occ_rows")}
+)
+
+SELECT 
+    codsoc,
+    numsto,
+    occ,
+    
+    -- Pass through the packed strings (parsed in next step)
+    nbroc, topau, typpl, nbpin, nbpre, nbprq, nbpop, nbpes, nbper, codcp,
+    
+    -- The Day Number (I-JOUR)
+    day_num,
+    
+    -- COBOL: DATOCC (Date Construction)
+    DATE(EXTRACT(YEAR FROM month_actual), EXTRACT(MONTH FROM month_actual), day_num) AS datocc
+
+FROM Calculated_Months,
+-- Smart Generator: Creates rows 1..28/30/31 based on the specific month
+UNNEST(GENERATE_ARRAY(1, EXTRACT(DAY FROM LAST_DAY(month_actual)))) AS day_num
+
+WHERE 
+    -- THE FILTER: Only keep active days
+    SUBSTR(toput, day_num, 1) = 'O'

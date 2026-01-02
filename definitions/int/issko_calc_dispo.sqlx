@@ -1,0 +1,73 @@
+config {
+    type: "view",
+    name: "issko_calc_dispo",
+    description: "Intermediate: Parsing Packed Numbers & Calculating Availability (CALC-DISPO)",
+    tags: ["intermediate", "daily_processing"]
+}
+
+/* COBOL MAPPING:
+   Replaces: PERFORM CALC-DISPO
+   Replaces: SEARCH ALL T-TACOP
+   
+   Logic:
+   1. CTE 'Parsed_Values': Extracts the specific 5-character string for the specific Day Number 
+      and converts it to a signed integer.
+   2. Main Query: Joins with coefficients and runs the subtraction formulas.
+*/
+
+WITH Parsed_Values AS (
+    SELECT 
+        *,
+        -- 1. Extract Coefficient Key (2 chars per day)
+        -- Formula: Start Position = ((Day - 1) * 2) + 1
+        SUBSTR(codcp, ((day_num - 1) * 2) + 1, 2) AS codcop_current,
+
+        -- 2. Extract & Parse Packed Numbers (5 chars per day: Sign + 4 Digits)
+        -- Formula: Start Position = ((Day - 1) * 5) + 1
+        
+        -- NBPIN -> NBRINI
+        CAST(SUBSTR(nbpin, ((day_num - 1) * 5) + 2, 4) AS INT64) 
+        * IF(SUBSTR(nbpin, ((day_num - 1) * 5) + 1, 1) = '-', -1, 1) AS nbrini,
+
+        -- NBPRE -> NBRRES
+        CAST(SUBSTR(nbpre, ((day_num - 1) * 5) + 2, 4) AS INT64) 
+        * IF(SUBSTR(nbpre, ((day_num - 1) * 5) + 1, 1) = '-', -1, 1) AS nbrres,
+
+        -- NBPOP -> NBROPT
+        CAST(SUBSTR(nbpop, ((day_num - 1) * 5) + 2, 4) AS INT64) 
+        * IF(SUBSTR(nbpop, ((day_num - 1) * 5) + 1, 1) = '-', -1, 1) AS nbropt,
+
+        -- NBPER -> NBREPR
+        CAST(SUBSTR(nbper, ((day_num - 1) * 5) + 2, 4) AS INT64) 
+        * IF(SUBSTR(nbper, ((day_num - 1) * 5) + 1, 1) = '-', -1, 1) AS nbrepr,
+
+        -- NBPRQ -> NBRREQ
+        CAST(SUBSTR(nbprq, ((day_num - 1) * 5) + 2, 4) AS INT64) 
+        * IF(SUBSTR(nbprq, ((day_num - 1) * 5) + 1, 1) = '-', -1, 1) AS nbrreq,
+
+        -- NBPES -> NBRESP (Just parsed, not used in formula, but needed for output)
+        CAST(SUBSTR(nbpes, ((day_num - 1) * 5) + 2, 4) AS INT64) 
+        * IF(SUBSTR(nbpes, ((day_num - 1) * 5) + 1, 1) = '-', -1, 1) AS nbresp
+
+    FROM ${ref("occ_days_in_window")}
+)
+
+SELECT 
+    P.*,
+    
+    -- Business Logic: NBDISR
+    -- Formula: Initial - Reserved - Options - Unlock - Requests
+    (P.nbrini - P.nbrres - P.nbropt - P.nbrepr - P.nbrreq) AS nbdisr,
+
+    -- Business Logic: NBDISP (Weighted Availability)
+    -- Formula: Initial - (Reserved * C1) - (Option * C2) - (Unlock * C3) - (Request * C4)
+    (P.nbrini 
+     - (P.nbrres * COALESCE(T.coeff1, 1)) -- Default to 1 if no coefficient found
+     - (P.nbropt * COALESCE(T.coeff2, 1))
+     - (P.nbrepr * COALESCE(T.coeff3, 1)) -- COBOL: ESPDE3
+     - (P.nbrreq * COALESCE(T.coeff4, 0)) -- COBOL: REQUE4 (Usually defaults to 0)
+    ) AS nbdisp
+
+FROM Parsed_Values P
+LEFT JOIN ${ref("tacop")} T 
+    ON P.codcop_current = T.codcop

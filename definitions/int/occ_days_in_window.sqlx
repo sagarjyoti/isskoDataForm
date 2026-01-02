@@ -1,0 +1,25 @@
+config {
+    type: "view", 
+    name: "occ_days_in_window",
+    description: "Intermediate: Filter days based on Extraction Window (CALCUL-DATE logic)",
+    tags: ["intermediate", "daily_processing"]
+}
+
+/* COBOL MAPPING:
+   Replaces: 
+   IF W-DATOCC < W-DATEXE OR W-DATOCC > W-DATEXEP
+      GO TO LOOP-JOUR (Skip iteration).
+   
+   Logic:
+   We Cross Join the single-row 'date_window' table to every row of our data.
+   Then we simply keep rows where DATOCC is within the range.
+*/
+
+SELECT 
+    D.*
+FROM ${ref("occ_days_o")} D
+CROSS JOIN ${ref("date_window")} W
+
+WHERE 
+    D.datocc >= W.w_datexe 
+    AND D.datocc <= W.w_datexep
