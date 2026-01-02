@@ -1,5 +1,5 @@
 config {
-    type: "view", -- Intermediate view
+    type: "table",
     name: "occ_rows",
     description: "Intermediate: Unpivots the 15 Periods (Columns to Rows)",
     tags: ["intermediate", "daily_processing"]
@@ -7,22 +7,17 @@ config {
 
 /* COBOL MAPPING:
    Replaces the Outer Loop: "PERFORM VARYING I-OCC FROM 1 BY 1 UNTIL I-OCC > 15"
-   
-   Logic:
-   Instead of looping procedurally, we transform the data structure.
-   We take the 15 sets of columns from 'sto_base' and stack them on top of each other.
-   Each row represents one "Stock-Month-Period".
 */
 
 ${
-    --  JS Loop to generate 15 SELECT statements combined with UNION ALL
+    // JS Loop to generate 15 SELECT statements combined with UNION ALL
     Array.from({length: 15}, (_, i) => i + 1).map(i => `
         SELECT 
             codsoc,
             numsto,
-            dat_mois,           -- Base Month (DATMOI)
+            dat_mois,            -- Base Month (DATMOI)
             
-            ${i} AS occ,        -- The Loop Index (I-OCC)
+            ${i} AS occ,         -- The Loop Index (I-OCC)
             
             -- Mapping the 'Per-Occurrence' fields
             NBROC${i} AS nbroc, -- Number of occupants
@@ -32,17 +27,17 @@ ${
             TOPAU${i} AS topau,
             TYPPL${i} AS typpl,
             
-            -- Packed Numeric Strings (155 chars) - To be parsed in next step
-            NBPIN${i} AS nbpin, -- Maps to NBPIN (Source for nbrini)
-            NBPRE${i} AS nbpre, -- Maps to NBPRE (Source for nbrres)
-            NBPRQ${i} AS nbprq, -- Maps to NBPRQ (Source for nbrreq)
-            NBPOP${i} AS nbpop, -- Maps to NBPOP (Source for nbropt)
-            NBPES${i} AS nbpes, -- Maps to NBPES (Source for nbresp)
-            NBPER${i} AS nbper, -- Maps to NBPER (Source for nbrepr)
+            -- Packed Numeric Strings (155 chars)
+            NBPIN${i} AS nbpin, -- Maps to NBPIN
+            NBPRE${i} AS nbpre, -- Maps to NBPRE
+            NBPRQ${i} AS nbprq, -- Maps to NBPRQ
+            NBPOP${i} AS nbpop, -- Maps to NBPOP
+            NBPES${i} AS nbpes, -- Maps to NBPES
+            NBPER${i} AS nbper, -- Maps to NBPER
             
             -- Coefficient Code (62 chars)
-            CODCP${i} AS codcp  -- Maps to CODCP (Source for Coefficient Lookup)
+            CODCP${i} AS codcp  -- Maps to CODCP
 
-        FROM \${ref("sto_base")}
+        FROM ${ref("sto_base")}
     `).join("\nUNION ALL\n")
 }

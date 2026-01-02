@@ -1,5 +1,5 @@
 config {
-    type: "view", 
+    type: "table", 
     name: "sto_base",
     description: "Staging: Main Stock Cursor (Replaces CURS-STO Join Logic)",
     tags: ["staging", "daily_processing"]
@@ -17,7 +17,8 @@ SELECT
     A.NUMSTO AS numsto,
     
     -- Date Formatting
-    PARSE_DATE('%Y-%m-%d', A.DATMOI) AS dat_mois,
+    -- PARSE_DATE('%Y-%m-%d', A.DATMOI) AS dat_mois,
+    A.DATMOI AS dat_mois,
     
     -- Metadata
     A.QUICRE, 

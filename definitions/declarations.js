@@ -1,29 +1,32 @@
 // This file links your Source Tables to Dataform so ${ref()} works.
+const schema = "mainframe_raw"; // Make sure your BigQuery dataset is named this!
+const database = "sqlxproject";
+
 
 declare({
-  database: "your-gcp-project-id", // Replace with your actual Project ID
-  schema: "your_raw_dataset",      // Replace with the dataset where COBOL data lives
+  database: database, // Replace with your actual Project ID
+  schema: schema,      // Replace with the dataset where COBOL data lives
   name: "R2SOCV0",
   description: "Raw COBOL Table: R2SOC"
 });
 
 declare({
-  database: "your-gcp-project-id",
-  schema: "your_raw_dataset",
+  database: database,
+  schema: schema,
   name: "RESTOV0",
   description: "Raw COBOL Table: RESTO"
 });
 
 declare({
-  database: "your-gcp-project-id",
-  schema: "your_raw_dataset",
+  database: database,
+  schema: schema,
   name: "TACOPV0",
   description: "Raw COBOL Table: TACOP (Coefficients)"
 });
 
 declare({
-  database: "your-gcp-project-id",
-  schema: "your_raw_dataset",
+  database: database,
+  schema: schema,
   name: "LSLOGV0",
   description: "Raw COBOL Table: LSLOG (Product Mapping)"
 });

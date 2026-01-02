@@ -1,5 +1,5 @@
 config {
-    type: "view",
+    type: "table",
     name: "issko_calc_dispo",
     description: "Intermediate: Parsing Packed Numbers & Calculating Availability (CALC-DISPO)",
     tags: ["intermediate", "daily_processing"]

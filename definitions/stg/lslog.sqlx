@@ -1,5 +1,5 @@
 config {
-    type: "view",
+    type: "table",
     name: "lslog",
     description: "Staging: Product & Housing Mapping (Replaces LSLOGV0 Lookup)",
     tags: ["staging", "daily_processing"]
