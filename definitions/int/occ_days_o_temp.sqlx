@@ -1,0 +1,13 @@
+config {
+    type: "table",
+    name: "occ_days_o_temp",
+    description: "This is a temp table before occ_days_o",
+    tags: ["intermediate", "daily_processing"]
+}
+
+    SELECT 
+        *,
+        -- Calculate the specific calendar month for this period (1..15)
+        -- occ=1 is current month, occ=2 is next month, etc.
+        DATE_ADD(dat_mois, INTERVAL (occ - 1) MONTH) AS month_actual
+    FROM ${ref("occ_rows")}

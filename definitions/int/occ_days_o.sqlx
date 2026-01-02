@@ -15,14 +15,14 @@ config {
    3. Check the string at that position. If it's 'O', keep it. If not, drop it.
 */
 
-WITH Calculated_Months AS (
-    SELECT 
-        *,
-        -- Calculate the specific calendar month for this period (1..15)
-        -- occ=1 is current month, occ=2 is next month, etc.
-        DATE_ADD(dat_mois, INTERVAL (occ - 1) MONTH) AS month_actual
-    FROM ${ref("occ_rows")}
-)
+-- WITH Calculated_Months AS (
+--     SELECT 
+--         *,
+--         -- Calculate the specific calendar month for this period (1..15)
+--         -- occ=1 is current month, occ=2 is next month, etc.
+--         DATE_ADD(dat_mois, INTERVAL (occ - 1) MONTH) AS month_actual
+--     FROM ${ref("occ_rows")}
+-- )
 
 SELECT 
     codsoc,
@@ -38,7 +38,8 @@ SELECT
     -- COBOL: DATOCC (Date Construction)
     DATE(EXTRACT(YEAR FROM month_actual), EXTRACT(MONTH FROM month_actual), day_num) AS datocc
 
-FROM Calculated_Months,
+-- FROM Calculated_Months,
+FROM ${ref("occ_days_o_temp")}
 -- Smart Generator: Creates rows 1..28/30/31 based on the specific month
 UNNEST(GENERATE_ARRAY(1, EXTRACT(DAY FROM LAST_DAY(month_actual)))) AS day_num
 
