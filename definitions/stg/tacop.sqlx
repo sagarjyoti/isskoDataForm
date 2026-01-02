@@ -1,5 +1,5 @@
 config {
-    type: "view", -- View is sufficient for lookup
+    type: "table",
     name: "tacop",
     description: "Staging: Coefficient Parameters (Replaces Memory Array T-TACOP)",
     tags: ["staging", "daily_processing"]

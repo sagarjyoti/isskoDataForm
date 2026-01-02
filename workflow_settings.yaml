@@ -1,0 +1,4 @@
+dataformCoreVersion: "3.0.0"
+defaultProject: "sqlxproject"  # Replace with your actual Google Cloud Project ID
+defaultLocation: "asia-south1"                  # Replace with your BigQuery region (e.g., US, EU, asia-south1)
+defaultDataset: "mainframe_raw"     # The default dataset where tables will be created

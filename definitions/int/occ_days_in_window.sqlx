@@ -1,5 +1,5 @@
 config {
-    type: "view", 
+    type: "table", 
     name: "occ_days_in_window",
     description: "Intermediate: Filter days based on Extraction Window (CALCUL-DATE logic)",
     tags: ["intermediate", "daily_processing"]

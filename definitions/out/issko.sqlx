@@ -4,7 +4,7 @@ config {
     description: "Final Output: Stock Occupation (Replaces CHARG-ISSKO + WRITE)",
     tags: ["final", "daily_processing"],
     
-    -- Performance Optimization: Partition by Date, Cluster by Product/Housing
+    // Performance Optimization: Partition by Date, Cluster by Product/Housing
     bigquery: {
         partitionBy: "DATOCC",
         clusterBy: ["CODPRD", "CODLGT"]
