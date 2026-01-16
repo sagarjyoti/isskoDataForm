@@ -1,8 +1,12 @@
+-- config {
+--     type: "view",
+--     name: "occ_days_o_temp",
+--     description: "This is a temp table before occ_days_o",
+--     tags: ["intermediate", "daily_processing"]
+-- }
+
 config {
-    type: "view",
-    name: "occ_days_o_temp",
-    description: "This is a temp table before occ_days_o",
-    tags: ["intermediate", "daily_processing"]
+    ...issko_config.settings.occ_days_o_temp
 }
 
     SELECT 

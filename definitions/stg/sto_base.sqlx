@@ -1,8 +1,12 @@
+-- config {
+--     type: "view", 
+--     name: "sto_base",
+--     description: "Staging: Main Stock Cursor (Replaces CURS-STO Join Logic)",
+--     tags: ["staging", "daily_processing"]
+-- }
+
 config {
-    type: "view", 
-    name: "sto_base",
-    description: "Staging: Main Stock Cursor (Replaces CURS-STO Join Logic)",
-    tags: ["staging", "daily_processing"]
+    ...issko_config.settings.sto_base
 }
 
 /* COBOL MAPPING:

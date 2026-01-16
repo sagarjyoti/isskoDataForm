@@ -1,8 +1,12 @@
+-- config {
+--     type: "view",
+--     name: "tacopV0",
+--     description: "Staging: Coefficient Parameters (Replaces Memory Array T-TACOP)",
+--     tags: ["staging", "daily_processing"]
+-- }
+
 config {
-    type: "view",
-    name: "tacopV0",
-    description: "Staging: Coefficient Parameters (Replaces Memory Array T-TACOP)",
-    tags: ["staging", "daily_processing"]
+    ...issko_config.settings.tacopV0
 }
 
 /* COBOL MAPPING:
