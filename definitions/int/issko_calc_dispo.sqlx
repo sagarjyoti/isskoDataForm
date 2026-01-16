@@ -1,8 +1,12 @@
+-- config {
+--     type: "view",
+--     name: "issko_calc_dispo",
+--     description: "Intermediate: Parsing Packed Numbers & Calculating Availability (CALC-DISPO)",
+--     tags: ["intermediate", "daily_processing"]
+-- }
+
 config {
-    type: "view",
-    name: "issko_calc_dispo",
-    description: "Intermediate: Parsing Packed Numbers & Calculating Availability (CALC-DISPO)",
-    tags: ["intermediate", "daily_processing"]
+    ...issko_config.settings.issko_calc_dispo
 }
 
 /* COBOL MAPPING:

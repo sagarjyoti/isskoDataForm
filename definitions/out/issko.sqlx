@@ -1,14 +1,18 @@
-config {
-    type: "table",
-    name: "ISSKO",
-    description: "Final Output: Stock Occupation (Replaces CHARG-ISSKO + WRITE)",
-    tags: ["final", "daily_processing"],
+-- config {
+--     type: "table",
+--     name: "ISSKO",
+--     description: "Final Output: Stock Occupation (Replaces CHARG-ISSKO + WRITE)",
+--     tags: ["final", "daily_processing"],
     
-    // Performance Optimization: Partition by Date, Cluster by Product/Housing
-    bigquery: {
-        partitionBy: "DATOCC",
-        clusterBy: ["CODPRD", "CODLGT"]
-    }
+--     // Performance Optimization: Partition by Date, Cluster by Product/Housing
+--     bigquery: {
+--         partitionBy: "DATOCC",
+--         clusterBy: ["CODPRD", "CODLGT"]
+--     }
+-- }
+
+config {
+    ...issko_config.settings.ISSKO
 }
 
 /* COBOL MAPPING:

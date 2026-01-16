@@ -1,8 +1,12 @@
+-- config {
+--     type: "view",
+--     name: "date_window",
+--     description: "Calculates the Extraction Window (CALCUL-DATE)",
+--     tags: ["control", "daily_processing"]
+-- }
+
 config {
-    type: "view",
-    name: "date_window",
-    description: "Calculates the Extraction Window (CALCUL-DATE)",
-    tags: ["control", "daily_processing"]
+    ...issko_config.settings.date_window
 }
 
 SELECT 
