@@ -20,7 +20,7 @@ declare({
 declare({
   database: database,
   schema: schema,
-  name: "TACOPV0",
+  name: "TACOP",
   description: "Raw COBOL Table: TACOP (Coefficients)"
 });
 

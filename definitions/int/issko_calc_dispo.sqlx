@@ -69,5 +69,5 @@ SELECT
     ) AS nbdisp
 
 FROM Parsed_Values P
-LEFT JOIN ${ref("tacop")} T 
+LEFT JOIN ${ref("tacopV0")} T 
     ON P.codcop_current = T.codcop
