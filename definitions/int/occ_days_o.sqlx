@@ -1,5 +1,5 @@
 config {
-    type: "table",
+    type: "view",
     name: "occ_days_o",
     description: "Intermediate: Unpivots Days and filters for 'O' (Active) only",
     tags: ["intermediate", "daily_processing"]
