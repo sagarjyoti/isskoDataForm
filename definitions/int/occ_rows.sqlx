@@ -1,10 +1,3 @@
--- config {
---     type: "view",
---     name: "occ_rows",
---     description: "Intermediate: Unpivots the 15 Periods (Columns to Rows)",
---     tags: ["intermediate", "daily_processing"]
--- }
-
 config {
     ...issko_config.settings.occ_rows
 }

@@ -1,7 +1,4 @@
 // This file links your Source Tables to Dataform so ${ref()} works.
-//const schema = "mainframe_raw"; // Make sure your BigQuery dataset is named this!
-//const database = "sqlxproject";
-
 const config = require('../includes/issko_config');
 
 declare({
