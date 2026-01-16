@@ -1,5 +1,5 @@
 config {
-    type: "table",
+    type: "view",
     name: "date_window",
     description: "Calculates the Extraction Window (CALCUL-DATE)",
     tags: ["control", "daily_processing"]

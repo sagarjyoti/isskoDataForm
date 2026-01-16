@@ -1,5 +1,5 @@
 config {
-    type: "table",
+    type: "view",
     name: "occ_rows",
     description: "Intermediate: Unpivots the 15 Periods (Columns to Rows)",
     tags: ["intermediate", "daily_processing"]

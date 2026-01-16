@@ -1,5 +1,5 @@
 config {
-    type: "table", 
+    type: "view", 
     name: "sto_base",
     description: "Staging: Main Stock Cursor (Replaces CURS-STO Join Logic)",
     tags: ["staging", "daily_processing"]
