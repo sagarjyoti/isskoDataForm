@@ -12,4 +12,4 @@ config {
 */
 
 SELECT 
-    CURRENT_DATE() AS dattrait
+    CAST("${issko_config.runDate}" AS DATE) AS dattrait

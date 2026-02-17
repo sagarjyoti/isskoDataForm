@@ -1,6 +1,16 @@
 const databaseName = "sqlxproject";
 const schemaName = "mainframe_raw";
 
+// const runDate = "2025-11-25"
+    const runDate = dataform.projectConfig.vars?.run_date
+    ? dataform.projectConfig.vars?.run_date
+    : new Date().toISOString().split('T')[0];
+
+    // dataform run --vars run_date=2025-11-25
+
+    // console.log("PROJECT CONFIG:", dataform.projectConfig);
+//   console.log("VARS:", dataform.projectConfig.vars);
+//   console.log("RUN DATE:", dataform.projectConfig.vars?.run_date);
 
 const settings = {
     f_param : {
@@ -101,5 +111,6 @@ const settings = {
 module.exports = { 
     settings,
     schemaName,
-    databaseName
+    databaseName,
+    runDate
 };
