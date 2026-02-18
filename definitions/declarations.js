@@ -25,6 +25,6 @@ declare({
 declare({
   database: config.databaseName,
   schema: config.schemaName,
-  name: "LSLOGV0",
+  name: "LSLOG",
   description: "Raw COBOL Table: LSLOG (Product Mapping)"
 });

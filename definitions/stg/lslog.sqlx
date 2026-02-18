@@ -12,9 +12,9 @@ config {
 */
 
 SELECT 
-    CODSOC AS codsoc,
-    NUMSTO AS numsto,
-    CODLGT AS codlgt,       -- Housing Code
-    CODLSC AS codprd        -- Product Code (Mapped from CODLSC)
+    lslog_codsoc AS codsoc,
+    lslog_numsto AS numsto,
+    lslog_codlgt AS codlgt,       -- Housing Code
+    lslog_codlsc AS codprd        -- Product Code (Mapped from CODLSC)
 
-FROM ${ref("LSLOGV0")}
+FROM ${ref("LSLOG")}
